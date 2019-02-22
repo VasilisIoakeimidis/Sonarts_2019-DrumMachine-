@@ -1,4 +1,4 @@
-# Sonarts_2019-DrumMachine-
+# Sonarts_2019_DrumMachine
 
 
 s.boot;
