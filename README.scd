@@ -1,8 +1,6 @@
 # Sonarts_2019_DrumMachine
 
 
-s.boot;
-
 s.meter;
 s.plotTree;
 s.quit;
@@ -28,7 +26,7 @@ Env([0,1,0], [1, 1], [1, -1]).plot;
 (
 SynthDef.new(\KickDrum,
 {
-      arg freqA=1000, freqB=50, freqC=10, freqDur1=0.01, freqDur2=0.2, freqCurv1=1, freqCurv2=1, attk=0.01, rel=1, curv1=1, curv2=(-12), amp=0.7, pan=0, out=0;
+      arg freqA=500, freqB=50, freqC=10, freqDur1=0.01, freqDur2=0.2, freqCurv1=1, freqCurv2=1, attk=0.01, rel=1, curv1=1, curv2=(-12), amp=0.7, pan=0, out=0;
       var sig, env, freqSweep;
 
       freqSweep = Env([freqA, freqB, freqC], [freqDur1, freqDur2], [freqCurv1, freqCurv2]).ar;
@@ -41,7 +39,7 @@ SynthDef.new(\KickDrum,
 )
 
 
-x = Synth.new(\KickDrum, [\freqA, 500, \attk, 0.01, \rel, 1, \amp,1]);
+x = Synth.new(\KickDrum, [\freqA, 300, \attk, 0.2, \rel, 1, \amp,1]);
 
 //Envelope Graph
 Env([500, 50, 10], [0.01, 0.2], [1, -1]).plot;
@@ -81,7 +79,7 @@ Pbindef(\kickDrum,
 //////////Snare
 
 ~snare = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/Snare Carabooboo 1.wav");
-~snare.play
+~snare.play;
 
 
 (
@@ -98,19 +96,31 @@ SynthDef.new(\snare, {
 y = Synth.new(\snare, [\buf, ~snare]);
 
 
+
 (
-y = Pbind(
+~mysnare = Pbind(
 	\instrument, \snare,
-	\dur,1,/////add seq.. Pseq([1,1,0.25,0.25,0.5,1],inf)
-	\attk, 0.01,
+	\buf, ~snare
+	\dur, 1,
+	\amp, 1,
 	\rel, 1,
-	\amp, 1,/////add vel.. Pwhite(0.1,1,inf),
 	\out, 0
-).play
+).play(t);
 )
 
-y.stop;
+~mysnare.stop;
+~mysnare.play;
 
+(
+Pbindef(\snare,
+	\instrument, \snare,
+	\buf, ~snare,
+	\dur, 0,5 ,
+	\amp, 1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).play(t);
 )
 
 
@@ -134,7 +144,44 @@ SynthDef.new(\hihat, {
 
 h = Synth.new(\hihat, [\buf, ~hihat]);
 
+(
+~myhihat = Pbind(
+	\instrument, \snare,
+	\buf, ~hihat
+	\dur, 1,
+	\amp, 1,
+	\rel, 1,
+	\out, 0
+).play(t);
+)
+
+~myhihat.stop;
+~myhihat.play;
+
+(
+Pbindef(\hihat,
+	\instrument, \hihat,
+	\buf, ~hihat,
+	\dur, 1,
+	\amp, 1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).play(t);
+)
+
+
+
+
+
+
 /////COWBELL
+
+
+
+
+
+
 
 ~cowbell = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/Cowbell Aviator.wav");
 ~cowbell.play
@@ -154,16 +201,29 @@ SynthDef.new(\cowbell, {
 c = Synth.new(\cowbell, [\buf, ~cowbell]);
 
 (
-c = Pbind(
+~mycowbell = Pbind(
 	\instrument, \cowbell
 	\dur,1,
 	\attk, 0.01,
 	\rel, 1,
 	\amp, 1,
 	\out, 0
-).play
+).play(t);
 )
 
-c.stop;
+~mycowbell.stop;
+~mycowbell.play;
+
+(
+Pbindef(\cowbell,
+	\instrument, \cowbell,
+	\buf, ~cowbell,
+	\dur, 4,
+	\amp, 1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).play(t);
+)
 
 )
