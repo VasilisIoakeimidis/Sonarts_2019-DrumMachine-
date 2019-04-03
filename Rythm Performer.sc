@@ -41,7 +41,7 @@ d.size;
 
 
 
-//////DRUMMACHINE500\\\\\\\\
+//////TANZ RHINO 500\\\\\\\\
 
 ///KickDrum
 
@@ -175,7 +175,7 @@ c = Synth.new(\cowbell, [\buf, ~cowbell]);
 Pbindef(\cowbell,
 	\instrument, \cowbell,
 	\buf, ~cowbell,
-	\dur, 1,//Pseq([3,1,0.25,0.25,0.5,1],2),
+	\dur, Pseq([0,0,0.25,0,0,],1),
 	\amp,1,
 	\attk, 0.01,
 	\rel, 1,
@@ -184,6 +184,89 @@ Pbindef(\cowbell,
 )
 
 )
+
+
+
+///////// Random Drums \\\\\\\\\\\\\
+
+(
+SynthDef.new(\randpercs, {
+	arg attk=0.01, rel=1, c1=1, c2=(-1), amp=1, buf=0, out=0;
+	var  sig, env;
+	env = Env([0, 1, 0], [attk, rel], [c1, c2]).kr(2);
+	sig = PlayBuf.ar(2, buf);
+	sig = sig*env;
+	Out.ar(out, sig)
+}).add;
+)
+(
+~sounds = Pbind(
+	\instrument, \sounds
+	\buf, Prand(d[\africa],inf),
+	\dur, Pseq([3,1,0.25,0.25,0.5,1],2),
+	\attk, 0.01,
+	\rel, 1,
+	\amp, 1,
+	\out, 0
+).play(t, quant: 2);
+)
+~sounds.stop;
+~sounds.play;
+(
+Pbindef(\myRandpercs,
+	\instrument, \randpercs,
+	\buf, Prand(d[\africa],inf),
+	\dur,Pseq([0.25, 0.25, 1, 0.5, 0.5, 1, 0.25, 0.25],inf), //Pseq([ 0.5, 0.5, 0.25, 0.25, 1, 0.25, 1, 0.25],inf),
+	\amp, 1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).stop(t, quant:4);
+)
+
+
+
+
+////START STOP CONTROLS\\\\\\
+
+
+Pdef(\kickDrum).play(t);
+Pdef(\kickDrum).stop;
+
+Pdef(\snare).play(t);
+Pdef(\snare).stop;
+
+Pdef(\hihat).play(t);
+Pdef(\hihat).stop;
+
+Pdef(\cowbell).play(t);
+Pdef(\cowbell).stop;
+
+Pdef(\Randpercs).play(t);
+Pdef(\Randpercs).free;
+t.stop;
+
+
+
+
+
+
+
+
+
+
+
+////////SYNTH NOT READY YET. HOLD YOU BREATH NOW CAUSE IT'S COMMING...\\\\\\\\\\\\\
+
+
+
+
+
+
+
+
+
+
 
 //////SYNTH V1\\\\\\\
 
@@ -218,6 +301,12 @@ Pbindef(\pulseTest,
 ).play(t, quant:4);
 )
 
+x = Synth.new(\pulseTest);
+x.set(\width, 0.5);
+x.set(\width, 0.25);
+x.set(\fund, 70);
+x.set(\fund, 670);
+x.free
 
 
 ///////SYNTH V2\\\\\\\
@@ -233,68 +322,10 @@ x = {
 x.free;
 
 
-///////// Random Drums \\\\\\\\\\\\\
-
-(
-SynthDef.new(\randpercs, {
-	arg attk=0.01, rel=1, c1=1, c2=(-1), amp=1, buf=0, out=0;
-	var  sig, env;
-	env = Env([0, 1, 0], [attk, rel], [c1, c2]).kr(2);
-	sig = PlayBuf.ar(2, buf);
-	sig = sig*env;
-	Out.ar(out, sig)
-}).add;
-)
-(
-~sounds = Pbind(
-	\instrument, \sounds
-	\buf, Prand(d[\africa],inf),
-	\dur, Pseq([3,1,0.25,0.25,0.5,1],2),
-	\attk, 0.01,
-	\rel, 1,
-	\amp, 1,
-	\out, 0
-).play(t, quant: 2);
-)
-~sounds.stop;
-~sounds.play;
-(
-Pbindef(\myRandpercs,
-	\instrument, \randpercs,
-	\buf, Prand(d[\africa],inf),
-	\dur,Pseq([0.25, 0.25, 1, 0.5, 0.5, 1, 0.25, 0.25],inf),
-	\amp, 1,
-	\attk, 0.01,
-	\rel, 1,
-	\out, 0
-).stop(t, quant:4);
-)
 
 
 
-////START STOP CONTROLS\\\\\\
+play{x=SinOsc;y=LFNoise0;a=y.ar(8);(x.ar(Pulse.ar(1)*24)+x.ar(90+(a*90))+MoogFF.ar(Saw.ar(y.ar(4,333,666)),a*XLine.ar(1,39,99,99,0,2)))!2/3}
 
-
-Pdef(\kickDrum).play(t);
-Pdef(\kickDrum).stop;
-
-Pdef(\snare).play(t);
-Pdef(\snare).stop;
-
-Pdef(\hihat).play(t);
-Pdef(\hihat).stop;
-
-Pdef(\cowbell).play(t);
-Pdef(\cowbell).stop;
-
-Pdef(\Randpercs).play(t);
-Pdef(\Randpercs).free;
-t.stop;
-
-
-x = Synth.new(\pulseTest);
-x.set(\width, 0.5);
-x.set(\width, 0.25);
-x.set(\fund, 70);
-x.set(\fund, 670);
-x.free
+play{VarSaw.ar((Hasher.ar(Latch.ar(SinOsc.ar((1..4)!2),Impulse.ar([5/2,5])))*300+300).round(60),0,LFNoise2.ar(2,1/3,1/2))/5}
+{Splay.ar(Ringz.ar(Impulse.ar([2, 1, 4], [0.1, 0.11, 0.12]), [0.1, 0.1, 0.5])) * EnvGen.kr(Env([1, 1, 0], [120, 10]), doneAction: 2)}.free;
