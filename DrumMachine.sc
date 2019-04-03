@@ -7,13 +7,38 @@ s.quit;
 
 /////Tempo
 (
-t = TempoClock(60/60).permanent_(true);
+t = TempoClock(124/60).permanent_(true);
 t.schedAbs(t.nextBar, {t.beats.postln;1});
 )
 
 t.schedAbs(t.nextBar,{t.tempo_(120/60);nil});
 
 t.stop
+
+//////files in folders
+
+(
+d = Dictionary.new;
+PathName("/Users/bazili/Desktop/DPMS/SC SOUNDS/").entries.do{
+	arg subfolder;
+	d.add(
+		subfolder.folderName.asSymbol ->
+		Array.fill(
+			subfolder.entries.size,
+			{
+				arg i;
+				Buffer.read(s, subfolder.entries[i].fullPath);
+			}
+		);
+	);
+};
+)
+d.class;
+d.size;
+
+
+
+
 
 
 //////DRUMMACHINE500\\\\\\\\
@@ -25,7 +50,7 @@ Env([0,1,0], [1, 1], [1, -1]).plot;
 (
 SynthDef.new(\KickDrum,
 {
-      arg freqA=1000, freqB=50, freqC=10, freqDur1=0.01, freqDur2=0.2, freqCurv1=1, freqCurv2=1, attk=0.01, rel=1, curv1=1, curv2=(-12), amp=0.7, pan=0, out=0;
+      arg freqA=500, freqB=50, freqC=10, freqDur1=0.01, freqDur2=0.2, freqCurv1=1, freqCurv2=1, attk=0.01, rel=1, curv1=1, curv2=(-12), amp=1, pan=0, out=0;
       var sig, env, freqSweep;
 
       freqSweep = Env([freqA, freqB, freqC], [freqDur1, freqDur2], [freqCurv1, freqCurv2]).ar;
@@ -38,29 +63,12 @@ SynthDef.new(\KickDrum,
 )
 
 
-x = Synth.new(\KickDrum, [\freqA, 500, \attk, 0.01, \rel, 1, \amp,1]);
+x = Synth.new(\KickDrum, [\freqA, 300, \attk, 0.2, \rel, 1, \amp,1]);
 
 //Envelope Graph
 Env([500, 50, 10], [0.01, 0.2], [1, -1]).plot;
 Env([0, 1 ,0], [0.01, 1], [1, -12]).plot;
 
-
-
-//Play in sequence (60 by defult,[dur 1])
-(
-x = Pbind(
-	\instrument, \KickDrum,
-	\dur,1,//add seq.. Pseq([1,1,0.25,0.25,0.5,1],inf)
-	\attk, 0.01,
-	\rel, 1,
-	\amp, 1, //add vel.. Pwhite(0.1,1,inf),
-	\out, 0
-).play
-)
-
-x.stop
-
-//Pbinddef *not working yet*
 
 (
 Pbindef(\kickDrum,
@@ -71,14 +79,14 @@ Pbindef(\kickDrum,
 	\attk, 0.01,
 	\rel, 0.2,
 	\out, 0
-).play(t);
+).play(t, quant: 4);
 )
 
 
 //////////Snare
 
 ~snare = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/Snare Carabooboo 1.wav");
-~snare.play
+~snare.play;
 
 
 (
@@ -89,25 +97,22 @@ SynthDef.new(\snare, {
 	sig = PlayBuf.ar(2, buf);
 	sig = sig*env;
 	Out.ar(out, sig)
-}).add
+}).add;
 )
 
 y = Synth.new(\snare, [\buf, ~snare]);
 
 
 (
-y = Pbind(
+Pbindef(\snare,
 	\instrument, \snare,
-	\dur,1,/////add seq.. Pseq([1,1,0.25,0.25,0.5,1],inf)
-	\attk, 0.01,
+	\buf, ~snare,
+	\dur, 2,//Pseq([0,0.5,0.75,0],inf),//Pseq([0,1,0,1],2),
+	\amp, 0.1,
+	\attk, 0.04,
 	\rel, 1,
-	\amp, 1,/////add vel.. Pwhite(0.1,1,inf),
 	\out, 0
-).play
-)
-
-y.stop;
-
+).play(t,quant: 2);
 )
 
 
@@ -131,7 +136,22 @@ SynthDef.new(\hihat, {
 
 h = Synth.new(\hihat, [\buf, ~hihat]);
 
+
+(
+Pbindef(\hihat,
+	\instrument, \hihat,
+	\buf, ~hihat,
+	\dur,Pseq([0,0.5,0.75,0],inf),//Pseq([0,1,0,1],2),
+	\amp,0.1,
+	\attk, 0.06,
+	\rel, 1,
+	\out, 0
+).play(t, quant: 4);
+)
+
+
 /////COWBELL
+
 
 ~cowbell = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/Cowbell Aviator.wav");
 ~cowbell.play
@@ -150,20 +170,131 @@ SynthDef.new(\cowbell, {
 
 c = Synth.new(\cowbell, [\buf, ~cowbell]);
 
+
 (
-c = Pbind(
-	\instrument, \cowbell
-	\dur,1,
+Pbindef(\cowbell,
+	\instrument, \cowbell,
+	\buf, ~cowbell,
+	\dur, 1,//Pseq([3,1,0.25,0.25,0.5,1],2),
+	\amp,1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).play(t, quant: 4);
+)
+
+)
+
+//////SYNTH V1\\\\\\\
+
+(
+SynthDef.new(\pulseTest, {
+	arg ampHz=4, fund=40, maxPartial=4, width=0.5;
+	var amp1, amp2, sig1, sig2, freq1, freq2;
+	amp1 = LFPulse.kr(ampHz,0,0.12) * 0.75;
+	amp2 = LFPulse.kr(ampHz,0.5,0.12) * 0.75;
+	freq1 = LFNoise0.kr(4).exprange(fund, fund * maxPartial).round(fund);
+	freq2 = LFNoise0.kr(4).exprange(fund, fund * maxPartial).round(fund);
+	freq1 = freq1 * (LFPulse.kr(8)+1);
+	freq2 = freq2 * (LFPulse.kr(6)+1);
+	sig1 = Pulse.ar(freq1, width, amp1);
+	sig2 = Pulse.ar(freq2, width, amp2);
+	sig1 = FreeVerb.ar(sig1, 0.7, 0.8, 0.25);
+	sig2 = FreeVerb.ar(sig2, 0.7, 0.8, 0.25);
+	Out.ar(0, sig1);
+	Out.ar(1, sig2);
+}).play;
+)
+
+)
+(
+Pbindef(\pulseTest,
+	\instrument, \pulseTest,
+	\dur,Pseq([1],1),
+	\amp, 1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).play(t, quant:4);
+)
+
+
+
+///////SYNTH V2\\\\\\\
+
+
+
+(
+x = {
+    MoogFF.ar(
+        Pulse.ar([40,121], [0.3,0.5]),
+		SinOsc.ar(XLine.kr(2000, 200), 0, 0.5) )}.play;
+)
+x.free;
+
+
+///////// Random Drums \\\\\\\\\\\\\
+
+(
+SynthDef.new(\randpercs, {
+	arg attk=0.01, rel=1, c1=1, c2=(-1), amp=1, buf=0, out=0;
+	var  sig, env;
+	env = Env([0, 1, 0], [attk, rel], [c1, c2]).kr(2);
+	sig = PlayBuf.ar(2, buf);
+	sig = sig*env;
+	Out.ar(out, sig)
+}).add;
+)
+(
+~sounds = Pbind(
+	\instrument, \sounds
+	\buf, Prand(d[\africa],inf),
+	\dur, Pseq([3,1,0.25,0.25,0.5,1],2),
 	\attk, 0.01,
 	\rel, 1,
 	\amp, 1,
 	\out, 0
-).play
+).play(t, quant: 2);
+)
+~sounds.stop;
+~sounds.play;
+(
+Pbindef(\myRandpercs,
+	\instrument, \randpercs,
+	\buf, Prand(d[\africa],inf),
+	\dur,Pseq([0.25, 0.25, 1, 0.5, 0.5, 1, 0.25, 0.25],inf),
+	\amp, 1,
+	\attk, 0.01,
+	\rel, 1,
+	\out, 0
+).stop(t, quant:4);
 )
 
-c.stop;
-
-)
 
 
-///////NEED_to_WORK_MORE_BILLY\\\\\\\
+////START STOP CONTROLS\\\\\\
+
+
+Pdef(\kickDrum).play(t);
+Pdef(\kickDrum).stop;
+
+Pdef(\snare).play(t);
+Pdef(\snare).stop;
+
+Pdef(\hihat).play(t);
+Pdef(\hihat).stop;
+
+Pdef(\cowbell).play(t);
+Pdef(\cowbell).stop;
+
+Pdef(\Randpercs).play(t);
+Pdef(\Randpercs).free;
+t.stop;
+
+
+x = Synth.new(\pulseTest);
+x.set(\width, 0.5);
+x.set(\width, 0.25);
+x.set(\fund, 70);
+x.set(\fund, 670);
+x.free
