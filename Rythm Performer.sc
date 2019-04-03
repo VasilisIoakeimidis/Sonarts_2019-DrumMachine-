@@ -40,10 +40,14 @@ d.size;
 
 
 
+       //////TANZ RHINO 500\\\\\\\\
 
-//////TANZ RHINO 500\\\\\\\\
 
-///KickDrum
+
+
+            ////KickDrum\\\\\
+
+
 
 Env([0,1,0], [1, 1], [1, -1]).plot;
 
@@ -83,7 +87,10 @@ Pbindef(\kickDrum,
 )
 
 
-//////////Snare
+
+          ////////Snare\\\\\\\\\
+
+
 
 ~snare = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/Snare Carabooboo 1.wav");
 ~snare.play;
@@ -116,7 +123,9 @@ Pbindef(\snare,
 )
 
 
-/////////HIHAT
+
+              /////////HIHAT\\\\\\\
+
 
 
 ~hihat = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/ClosedHH Decadence 1.wav");
@@ -150,7 +159,9 @@ Pbindef(\hihat,
 )
 
 
-/////COWBELL
+
+           /////COWBELL\\\\\\
+
 
 
 ~cowbell = Buffer.read(s, "/Users/bazili/Library/Application Support/SuperCollider/Cowbell Aviator.wav");
@@ -187,7 +198,10 @@ Pbindef(\cowbell,
 
 
 
-///////// Random Drums \\\\\\\\\\\\\
+
+        ///////// Random Drums \\\\\\\\\\\\\
+
+
 
 (
 SynthDef.new(\randpercs, {
@@ -227,7 +241,7 @@ Pbindef(\myRandpercs,
 
 
 
-////START STOP CONTROLS\\\\\\
+                ////START STOP CONTROLS\\\\\\
 
 
 Pdef(\kickDrum).play(t);
@@ -256,7 +270,7 @@ t.stop;
 
 
 
-////////SYNTH NOT READY YET. HOLD YOU BREATH NOW CAUSE IT'S COMMING...\\\\\\\\\\\\\
+    ////////SYNTH NOT READY YET. HOLD YOU BREATH NOW CAUSE IT'S COMMING...\\\\\\\\\\\\\
 
 
 
