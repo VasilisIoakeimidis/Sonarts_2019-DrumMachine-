@@ -33,6 +33,8 @@ t.schedAbs(t.nextBar, {t.beats.postln;1});
 ```
 
 Στον σύνδεσμο που ακολουθεί υπάρχει ένα screen recording video που δείχνει το TanzRhino 500  σε λειτουργεία. Για να δουλέψει ο κώδικας με τους ήχους που έχω ορίσει ο χρήστης θα πρέπει να κατεβάσει και τον φάκελο στον υπολογιστή του και να ορίσει τα διαφορετικά directories του κάθε ήχου. Σε άλλη περίπτωση μπορεί να χρησιμοποιήσει δικά του samples. 
+
+
 [TanzRhino Vid] (https://drive.google.com/open?id=1hQHgLkrnUsOZSoSHMquC4Y-KFFyBDbx2)
 
 
