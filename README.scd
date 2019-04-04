@@ -233,7 +233,7 @@ Pbindef(\myRandpercs,
 	\attk, 0.01,
 	\rel, 1,
 	\out, 0
-).stop(t, quant:4);
+).play(t, quant:4);
 )
 
 
