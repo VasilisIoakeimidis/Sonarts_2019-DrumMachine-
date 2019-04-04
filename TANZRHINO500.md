@@ -28,5 +28,6 @@ t = TempoClock(124/60).permanent_(true);
 t.schedAbs(t.nextBar, {t.beats.postln;1});
 )
 ```
+```
 \dur,Pseq([0.25, 0.25, 1, 0.5, 0.5, 1, 0.25, 0.25],inf),
 ```
