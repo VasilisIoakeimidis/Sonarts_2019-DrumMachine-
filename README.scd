@@ -268,7 +268,7 @@ t.stop;
 
 
 
-////////SYNTH NOT READY YET. HOLD YOU BREATH NOW CAUSE IT'S COMMING...\\\\\\\\\\\\\
+////////SYNTH NOT READY YET. HOLD YOUR BREATH NOW CAUSE IT'S COMMING...\\\\\\\\\\\\\
 
 
 
